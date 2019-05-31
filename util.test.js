@@ -1,24 +1,20 @@
 const puppeteer = require('puppeteer');
 const { generateText, checkAndGenerate } = require('./util');
-
+// checks if the generate text function is indeed creating some text. 
 it('generate some text', () => {
     const text = generateText('john', 29);
     expect(text).toBe('john (29 years old)');
 })
+// false positive test.
 it('checking for false ', () => {
     const text = generateText('', null);
     expect(text).toBe(' (null years old)');
 })
-
-it('should output a valid text option.', () => {
-    const text = checkAndGenerate('john', 25);
-    expect(text).toBe('john (25 years old)');
-})
-
-test('should click around', async () => {
+// Testing data flow of the UI. Using puppeteer libray based on chromium
+test('should create an element with text and the correct class', async () => {
     const browser = await puppeteer.launch({
         headless: false,
-        slowMo: 50,
+        slowMo: 80,
         args: ['--window-size=1920,1080']
     });
     const page = await browser.newPage();
@@ -29,4 +25,6 @@ test('should click around', async () => {
     await page.click('input#age')
     await page.type('input#age', '25');
     await page.click('#btnAddUser')
-});
+    const finalText = await page.$eval('.user-item', el => el.textContent);
+    expect(finalText).toBe('John (25 years old)')
+}, 10000);
