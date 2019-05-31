@@ -15,3 +15,18 @@ it('should output a valid text option.', () => {
     expect(text).toBe('john (25 years old)');
 })
 
+test('should click around', async () => {
+    const browser = await puppeteer.launch({
+        headless: false,
+        slowMo: 50,
+        args: ['--window-size=1920,1080']
+    });
+    const page = await browser.newPage();
+    await page.goto('file:///C:/Users/USER/Documents/js-testing-introduction/index.html');
+
+    await page.click('input#name')
+    await page.type('input#name', 'John');
+    await page.click('input#age')
+    await page.type('input#age', '25');
+    await page.click('#btnAddUser')
+});
